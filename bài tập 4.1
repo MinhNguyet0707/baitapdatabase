@@ -1,0 +1,43 @@
+CREATE TABLE skin(
+id INT PRIMARY key AUTO_INCREMENT,
+NAME VARCHAR(100),
+price VARCHAR(100),
+created_at DATE 
+);
+CREATE TABLE figure(
+id INT PRIMARY key AUTO_INCREMENT,
+NAME VARCHAR(100),
+POSITION VARCHAR(200),
+skin_id INT,
+FOREIGN KEY (skin_id) REFERENCES skin(id)
+);
+
+CREATE TABLE skin_figure(
+skin_id INT,
+figure_id INT,
+FOREIGN KEY (skin_id) REFERENCES skin(id),
+FOREIGN KEY (figure_id) REFERENCES figure(id)
+);
+
+INSERT INTO skin(NAME,price,created_at)
+VALUES('ngutte','200','2022-1-3'),
+('hoa','500','2022-16-3'),
+('ngu','600','2022-4-3'),
+('maichoi','200','2022-4-3'),
+('dsdasd','800','2022-6-3')
+INSERT INTO figure(NAME ,POSITION,skin_id)
+VALUES('aaa','dau',1),
+('bbb','cuoi',1),
+('ccc','giưa',2),
+('ddd','dau',3),
+('ggg','canh',4)
+INSERT INTO skin_figure(skin_id,figure_id)
+VALUES(1,1),
+(1,2),
+(2,2),
+(3,4),
+(4,5)
+SELECT figure.Name AS 'Tên tướng', skin.NAME 'Dòng trang phục'
+FROM figure 
+JOIN  skin_figure ON figure.Id = skin_figure.figure_id
+JOIN Skin  ON skin_figure.Skin_Id = skin.Id;
