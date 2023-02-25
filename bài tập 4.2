@@ -1,0 +1,162 @@
+CREATE DATABASE tmt_system
+CREATE TABLE blog(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	title VARCHAR(200),
+	description VARCHAR(200),
+	content VARCHAR(100),
+	created_date DATE 
+);
+
+CREATE TABLE role(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	role_name VARCHAR(200)
+);
+
+CREATE TABLE user(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	username VARCHAR(100),
+	PASSWORD VARCHAR(100),
+	full_name VARCHAR(200),
+	phone VARCHAR(12),
+	email VARCHAR(200),
+	role_id INT,
+	FOREIGN KEY(role_id) REFERENCES role(id)
+
+);
+
+CREATE TABLE course(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	course_name VARCHAR(200),
+	DESCRIPTION VARCHAR(200),
+	price BIGINT,
+	course_type VARCHAR(200),
+	vote VARCHAR(200)
+);
+
+CREATE TABLE user_course(
+	user_id INT,
+	course_id INT,
+	FOREIGN KEY(user_id) REFERENCES user(id),
+	FOREIGN KEY(course_id) REFERENCES course(id)
+
+);
+CREATE TABLE opening_schedule(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	start_date DATE,
+	address VARCHAR(200),
+	study_day DATE,
+	study_time VARCHAR(30)
+);
+CREATE TABLE course_opening_schedule(
+	course_id INT,
+	opening_schedule_id INT,
+	FOREIGN KEY(course_id) REFERENCES course(id),
+	FOREIGN KEY(opening_schedule_id) REFERENCES opening_schedule(id)
+
+);
+CREATE TABLE transaction_history(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	registration_date DATE,
+	status VARCHAR(20),
+	course_id INT,
+	user_id INT,
+	FOREIGN KEY(course_id) REFERENCES course(id),
+	FOREIGN KEY(user_id) REFERENCES user(id)
+
+);
+
+CREATE TABLE account_banking(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	bank_name VARCHAR(30),
+	account_num VARCHAR(30),
+	user_id INT UNIQUE,
+	FOREIGN KEY(user_id) REFERENCES user(id)
+
+);
+INSERT INTO blog(title,DESCRIPTION,content,created_date)
+VALUES( 'Cách học lập trình', 'Hướng dẫn học lập trình', 'Bài viết giới thiệu  các bước cơ bản để học lập trình', '2022-01-01'),
+( 'Cách tạo website đơn giản', 'Hướng dẫn tạo website đơn giản bằng HTML và CSS', 'Bài viết giới thiệu  các bước cơ bản để học lập trình bằng HTML và CSS', '2022-01-02'),
+( 'Lập trình Python căn bản', 'Học Python từ cơ bản đến nâng cao', 'Bài viết giới thiệu  các bước cơ bản để học lập trình Python', '2022-01-03'),
+( 'Sử dụng Git ', 'Hướng dẫn sử dụng Git cho người mới bắt đầu', 'Bài viết giới thiệu  các bước cơ bản để học lập trình sử dụng Git cho dự án của bạn', '2022-01-04'),
+( 'Lập trình PHP ', 'Học PHP từ cơ bản đến nâng cao', 'Bài viết giới thiệu  các bước cơ bản để học trình PHP', '2022-01-05');
+
+INSERT INTO user (id, username, password, full_name, phone, email)
+VALUES
+(1, 'aaa', 'password1', 'Nguyễn Văn A', '0123456789', 'user1@gmail.com'),
+(2, 'bbb', 'password2', 'Trần Thị B', '0123456789', 'user2@gmail.com'),
+(3, 'ccc', 'password3', 'Lê Văn C', '0123456789', 'user3@gmail.com'),
+(4, 'ddd', 'password4', 'Phạm Thị D', '0123456789', 'user4@gmail.com'),
+(5, 'fff', 'password5', 'Nguyễn Văn E', '0123456789', 'user5@gmail.com');
+INSERT INTO role (id, role_name)
+VALUES
+(1, 'nguyet'),
+(2, 'nguyet2'),
+(3, 'nguyet3'),
+(4, 'nguyet4'),
+(5, 'nguyet5');
+INSERT INTO course (course_name, description, price, course_type, vote)
+VALUES( 'user1', 'Hạnh phúc không phải là trời yên biển lặng', 50, 'online', 4.5),
+( 'user2', ' mà là trải qua sóng gió nhưng vẫn đủ trầm tĩnh sáng suốt để chèo chống bình an.', 80, 'offline', 4.3),
+('user3', ' mà là trải qua sóng gió nhưng vẫn đủ trầm tĩnh sáng suốt để chèo chống bình an.', 100, 'online', 4.8),
+( 'user4', ' mà là trải qua sóng gió nhưng vẫn đủ trầm tĩnh sáng suốt để chèo chống bình an.', 120, 'offline', 4.6),
+( 'user5', 'mà là trải qua sóng gió nhưng vẫn đủ trầm tĩnh sáng suốt để chèo chống bình an.', 150, 'online', 4.7);
+
+INSERT INTO user_course(user_id,course_id)
+VALUES (1,2),
+(1,1),
+(2,3),
+(2,4),
+(3,5)
+
+INSERT INTO opening_schedule ( start_date, address, study_day, study_time)
+VALUES
+    ( '2023-03-01', '123 NGuyễn trãi', 'Monday', '10:00:00'),
+    ( '2023-03-03', '456 thanh xuân.', 'Wednesday', '14:00:00'),
+    ( '2023-03-05', '789 trung kính', 'Saturday', '09:00:00'),
+      ( '2023-03-06', 'trung hòa', 'Saturday', '09:00:00'),
+        ( '2023-03-05', 'nguyễn xiển', 'Saturday', '09:00:00');
+
+INSERT INTO course_opening_schedule(course_id,opening_schedule_id)
+VALUES(1,2),
+(1,3),
+(2,3),
+(4,5),
+(4,4);
+INSERT INTO transaction_history ( registration_date, status,course_id,user_id)
+VALUES
+    ( '2023-02-15', 'Successful', 1,2),
+    ( '2023-02-20', 'Failed', 1,1),
+     ( '2023-02-20', 'Failed', 2,1),
+      ( '2023-02-20', 'Failed', 2,2),
+    ('2023-02-25', 'Pending', 2,3);
+
+INSERT INTO account_banking ( bank_name, account_num,user_id)
+VALUES
+    ( 'Bank A', '1234567890',1),
+    ( 'Bank B', '0987654321',2),
+    ( 'Bank C', '0987654321',3),
+    ( 'Bank D', '0987654321',4),
+    ( 'Bank E', '2468101214',5);
+-- ý 2
+SELECT user.id,user.phone,user.email,user.role_id,account_banking.account_num
+FROM user
+LEFT JOIN account_banking ON user.id=account_banking.user_id;
+    
+-- ys 3
+SELECT DISTINCT id
+FROM course
+WHERE course_type = 'online';
+-- y 4
+
+SELECT opening_schedule.start_date,opening_schedule.study_time,course.DESCRIPTION,course.course_name,course.price,course.course_type
+FROM opening_schedule
+JOIN course ON opening_schedule.id=course.id;
+
+-- y 5
+SELECT transaction_history.id AS 'mã giao dịch', transaction_history.registration_date AS 'ngày đăng ký',transaction_history.status AS 'trạng thái',
+course.course_name AS 'ten khoa hoc', user.username AS 'tên học viên'
+FROM transaction_history 
+JOIN course  ON transaction_history.course_id=course.id
+JOIN user ON transaction_history.user_id = user.id;
+
+
