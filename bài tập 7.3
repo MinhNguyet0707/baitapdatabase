@@ -1,0 +1,177 @@
+-- 1 Tìm số hóa đơn đã mua ít nhất 1 sản phẩm do Singapore sản xuất
+SELECT COUNT(DISTINCT orders.id) as so_hoa_don
+FROM orders
+JOIN product ON orders.product_id = product.id
+WHERE product.from_country = 'Singapore'
+
+-- 2. Có bao nhiêu hóa đơn không phải của khách hàng đăng ký thành viên mua? (Bảng đơn hàng nhưng giá trị customer_id là null)
+SELECT COUNT(*) FROM customers WHERE id IS NULL;
+
+
+-- 3. Có bao nhiêu sản phẩm khác nhau được bán ra trong năm 2006.
+
+SELECT COUNT(DISTINCT id) FROM product_detail WHERE updated_date=2006;
+
+-- 4. Cho biết trị giá hóa đơn cao nhất, thấp nhất là bao nhiêu ?
+SELECT MAX(total_money) FROM orders ;
+SELECT MIN(total_money) FROM orders ;
+
+
+-- 5. Trị giá trung bình của tất cả các hóa đơn được bán ra trong năm 2006 là bao nhiêu?
+SELECT AVG(total_money) FROM orders WHERE created_date=2006;
+
+
+-- 6. Tính doanh thu bán hàng trong năm 2006.
+SELECT SUM(total_money) FROM orders
+WHERE updated_date=2006;
+
+
+
+-- 7. Tìm số hóa đơn có trị giá cao nhất trong năm 2006.
+SELECT * FROM orders
+WHERE updated_date=2006 AND (SELECT MAX(total_money) FROM orders WHERE updated_date=2006);
+
+
+-- 8. Tìm họ tên khách hàng đã mua hóa đơn có trị giá cao nhất trong năm 2006.
+SELECT CONCAT(first_name,' ', last_name) AS họ tên
+FROM account
+JOIN orders ON account.id=orders.id
+WHERE orders.updated_date =2006 AND (SELECT MAX(total_money) FROM orders WHERE orders.updated_date=2006);
+
+
+
+-- 9. In ra danh sách các sản phẩm (MASP, TENSP) có giá bán bằng 1 trong 3 mức giá cao nhất.
+
+    (câu này em ko hiểu vì sao mà lại ko cho em kết hợp IN+LIMIT , em thử IN+top cũng ko đc ạ )
+
+SELECT product.id,product.product_name 
+FROM product
+JOIN product_detail  ON product.id = product_detail.product_id
+WHERE standard_cost IN  
+(SELECT standard_cost FROM product_detail ORDER BY standard_cost DESC LIMIT 3);
+
+-- 10. In ra danh sách các sản phẩm (MASP, TENSP) do “Thai Lan” sản xuất có giá bằng 1 trong 3 mức giá cao nhất (của tất cả các sản phẩm).
+
+SELECT product.id,product.product_name FROM product
+JOIN product_detail  ON product.id = product_detail.product_id
+WHERE product.from_country = 'Thai Lan' AND product_detail.standard_cost in(
+SELECT product_detail.standard_cost  FROM product_detail ORDER BY standard_cost DESC LIMIT 3
+);
+
+
+
+-- 11. In ra danh sách các sản phẩm (MASP, TENSP) do “Trung Quoc” sản xuất có giá bằng 1 trong 3 mức giá cao nhất (của sản phẩm do “Trung Quoc” sản xuất)
+SELECT product.id,product.product_name FROM product
+JOIN product_detail  ON product.id = product_detail.product_id
+WHERE product.from_country = 'trung Quoc' AND product_detail.standard_cost IN(
+SELECT product_detail.standard_cost  FROM product_detail ORDER BY standard_cost DESC LIMIT 3
+);
+
+
+
+-- 12  ra danh sách 3 khách hàng có doanh số cao nhất (sắp xếp theo kiểu xếp hạng).
+SELECT  customers.username SUM (product_detail.quantity* product_detail.standard_cost)
+FROM  customers 
+JOIN orders ON customers.id= orders.customer_id
+JOIN order_detail ON orders.id=order_detail.product_detail_id
+GROUP BY customers.username
+ORDER BY  SUM (product_detail.quantity* product_detail.standard_cost)
+
+
+
+-- 13. Tính tổng số sản phẩm của từng nước sản xuất.
+SELECT product.from_country, SUM(product_detail.quantity) FROM product
+JOIN product_detail ON product.id=product_detail.product_id
+GROUP BY product.from_country;
+
+
+-- 14. Với từng nước sản xuất, tìm giá bán cao nhất, thấp nhất, trung bình của các sản phẩm.
+
+SELECT product.from_country, MAX(product_detail.standard_cost),MIN(product_detail.standard_cost),AVG(product_detail.standard_cost) FROM product
+JOIN product_detail ON product.id=product_detail.product_id
+GROUP BY product.from_country;
+-- 15. Tính doanh thu bán hàng mỗi ngày
+SELECT orders.updated_date, SUM(orders.total_money)
+FROM orders
+GROUP BY orders.updated_date;
+
+-- 16. Tính tổng số lượng của từng sản phẩm bán ra trong tháng 10/2006.
+SELECT product.id, product.product_name, SUM(order_detail.quantity)
+FROM product 
+JOIN orders ON product.id = orders.product_id
+JOIN order_detail ON product.id = order_detail.order_id
+WHERE orders.created_date >= '2006-10-01' 
+GROUP BY product.id, product.product_name
+
+
+-- 17. Tìm hóa đơn có mua ít nhất 4 sản phẩm khác nhau.
+
+
+
+
+-- 18. Tìm khách hàng (MAKH, HOTEN) có số lần mua hàng nhiều nhất.
+SELECT customers.id,customers.username , COUNT(*)AS SoLanMua
+FROM customers
+JOIN  orders ON  customers.id=orders.customer_id
+GROUP BY  customers.id,customers.username 
+ORDER BY SoLanMua DESC
+LIMIT 1;
+
+
+-- 19. Tháng mấy trong năm 2006, doanh số bán hàng cao nhất ?
+SELECT MONTH(created_date) AS THANG, SUM((order_detail.quantity)*(order_detail.toltal)) AS DOANHSO
+FROM orders JOIN order_detail ON orders.id= order_detail.order_id
+WHERE YEAR(created_date) = 2006
+GROUP BY THANG
+ORDER BY DOANHSO DESC
+LIMIT  1
+;
+
+
+-- 20. Tìm sản phẩm (MASP, TENSP) có tổng số lượng bán ra thấp nhất trong năm 2006.
+SELECT product.id, product.product_name,SUM(order_detail.quantity) AS TONG_SOLUONG
+ FROM product
+JOIN orders ON product.id = orders.product_id
+JOIN order_detail ON product.id = order_detail.order_id
+WHERE orders.created_date = '2006' 
+GROUP BY  product.id, product.product_name
+ORDER BY TONG_SOLUONG ASC
+LIMIT 1;
+
+-- 21. Mỗi nước sản xuất, tìm sản phẩm (MASP,TENSP) có giá bán cao nhất.
+SELECT product.from_country, product.id,product.product_name, MAX(order_detail.toltal) AS giaBanCaoNhat
+FROM product
+JOIN orders ON product.descriptions=orders.product_id
+JOIN order_detail ON product.id=order_detail.order_id
+GROUP BY product.from_country, product.id,product.product_name
+HAVING MAX(order_detail.toltal)
+
+
+-- 22. Tìm nước sản xuất sản xuất ít nhất 3 sản phẩm có giá bán khác nhau.
+
+SELECT product.from_country, product.id,product.product_name
+FROM product
+JOIN product_detail  ON product.id = product_detail.product_id
+GROUP BY  product.from_country, product.id,product.product_name
+HAVING COUNT(DISTINCT product_detail.standard_cost) >= 3
+
+-- 23. Trong 10 khách hàng có doanh số cao nhất, tìm khách hàng có số lần mua hàng nhiều nhất.
+
+SELECT customers.id,customers.username, COUNT(order_detail.quantity) AS soLanMuaH
+FROM customers
+JOIN orders ON customers.id=orders.customer_id
+JOIN order_detail ON customers.id= order_detail.order_id;
+WHERE customers.id IN (
+SELECT customers.id
+FROM customers 
+JOIN order_detail ON customers.id = order_detail.order_id
+GROUP BY customers.id
+ORDER BY SUM(order_detail.quantity * order_detail.toltal) DESC
+)
+GROUP BY customers.id,customers.username
+;
+
+
+
+
+
