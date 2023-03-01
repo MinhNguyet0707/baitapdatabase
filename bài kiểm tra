@@ -1,0 +1,251 @@
+CREATE TABLE user (
+id INT PRIMARY KEY AUTO_INCREMENT,
+username VARCHAR(100) NOT NULL,
+password VARCHAR(100) NOT NULL,
+first_name VARCHAR(100),
+last_name VARCHAR(100),
+gender ENUM('MALE', 'FEMALE'),
+email VARCHAR(100) NOT NULL,
+birth_day DATE,
+avartar VARCHAR(100),
+phone VARCHAR(15),
+address VARCHAR(100),
+city VARCHAR(100),
+country VARCHAR(100),
+code_active VARCHAR(10) NOT NULL,
+status ENUM('ENABLE', 'DISABLE') NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+CREATE TABLE role (
+id INT PRIMARY KEY AUTO_INCREMENT,
+role_name VARCHAR(100) NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+
+CREATE TABLE user_role (
+id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+user_id int NOT NULL,
+role_id INT NOT NULL,
+FOREIGN KEY (user_id) REFERENCES user(id),
+FOREIGN KEY (role_id) REFERENCES role(id)
+);
+CREATE TABLE permission (
+id INT PRIMARY KEY AUTO_INCREMENT,
+permission_name VARCHAR(100) NOT NULL,
+created_at DATETIME NOT NULL,
+updated_at DATETIME NOT NULL
+);
+CREATE TABLE role_permission (
+id INT PRIMARY KEY AUTO_INCREMENT,
+role_id INT NOT NULL,
+permission_id INT NOT NULL,
+FOREIGN KEY (role_id) REFERENCES role(id),
+FOREIGN KEY (permission_id) REFERENCES permission(id)
+);
+
+CREATE TABLE if NOT EXISTS category (
+id INT PRIMARY KEY AUTO_INCREMENT,
+category_code VARCHAR(255) NOT NULL,
+category_name VARCHAR(255) NOT NULL,
+created_date DATETIME NOT NULL,
+updated_date DATETIME NOT NULL
+);
+baikiemtraCREATE TABLE if NOT EXISTS supplier (
+id INT PRIMARY KEY AUTO_INCREMENT,
+supplier_code VARCHAR(255) NOT NULL,
+image VARCHAR(255),
+supplier_name VARCHAR(255) NOT NULL,
+created_date DATETIME NOT NULL,
+updated_date DATETIME NOT NULL
+);
+CREATE TABLE if NOT EXISTS product (
+id INT PRIMARY KEY AUTO_INCREMENT,
+product_name VARCHAR(255) NOT NULL,
+product_code VARCHAR(255) NOT NULL,
+description VARCHAR(255),
+from_country VARCHAR(255) NOT NULL,
+is_new ENUM('NEW', 'NOT_NEW'),
+category_id INT,
+supplier_id INT,
+created_date DATETIME NOT NULL,
+updated_date DATETIME NOT NULL,
+FOREIGN KEY (category_id) REFERENCES category(id),
+FOREIGN KEY (supplier_id) REFERENCES supplier(id)
+);
+CREATE TABLE if NOT EXISTS product_detail (
+id INT PRIMARY KEY AUTO_INCREMENT,
+size VARCHAR(20) NOT NULL,
+image VARCHAR(255) NOT NULL,
+color VARCHAR(255) NOT NULL,
+quantity INT,
+product_id INT,
+created_date DATETIME NOT NULL,
+updated_date DATETIME NOT NULL,
+FOREIGN KEY (product_id) REFERENCES product(id)
+);
+CREATE TABLE if NOT EXISTS customer (
+id INT PRIMARY KEY AUTO_INCREMENT,
+username VARCHAR(255) NOT NULL,
+password VARCHAR(255) NOT NULL,
+first_name VARCHAR(255) NOT NULL,
+last_name VARCHAR(255) NOT NULL,
+gender ENUM('MALE','FEMALE'),
+email VARCHAR(255),
+birthday DATETIME ,
+avartar VARCHAR(255),
+address VARCHAR(255),
+customer_status ENUM('ACTIVE', 'DEACTIVE') DEFAULT 'ACTIVE',
+created_date DATETIME NOT NULL,
+updated_date DATETIME NOT NULL
+);
+CREATE TABLE if NOT EXISTS orders (
+id INT PRIMARY KEY AUTO_INCREMENT,
+order_code VARCHAR(255) ,
+total_money FLOAT NOT NULL,
+orders_status ENUM('PENDING', 'APPROVED', 'SHIPPING', 'RECEIVED'),
+customer_id INT,
+created_date DATETIME NOT NULL,
+updated_date DATETIME ,
+FOREIGN KEY (customer_id) REFERENCES customer(id)
+);
+CREATE TABLE if NOT EXISTS order_detail (
+id INT PRIMARY KEY AUTO_INCREMENT,
+quantity INT UNSIGNED not NULL,
+total_money FLOAT NOT NULL,
+product_detail_id INT,
+order_id INT,
+created_date DATETIME NOT NULL,
+updated_date DATETIME ,
+FOREIGN KEY (product_detail_id) REFERENCES product_detail(id),
+FOREIGN KEY (order_id) REFERENCES orders(id)
+);
+
+INSERT INTO category
+(id, category_code, category_name, created_date, updated_date)
+VALUES
+(1, '49884-235', 'Amblyrhynchus cristatus', NOW(), NOW()),
+(2, '65649-432', 'Antidorcas marsupialis', NOW(), NOW()),
+(3, '68647-206', 'Ara ararauna', NOW(), NOW()),
+(4, '68647-206', 'Ara ararauna', NOW(), NOW()),
+(5, '68647-206', 'Ara ararauna', NOW(), NOW()),
+(6, '68647-206', 'Ara araraunaaa', NOW(), NOW()),
+(7, '68647-206', 'Ara ararauna', NOW(), NOW());
+
+INSERT INTO supplier
+(id, supplier_code, supplier_name, image, created_date, updated_date)
+VALUES
+(1, '49288-0870', 'Corvus brachyhos', 'data:image/png;base64,iVBORw0KGg', NOW(), NOW()),
+(2, '64809-104', 'Gymnorhina tibicen', 'data:image/png;base64,iVBORw0KG', NOW(), NOW()),
+(3, '63323-258', 'Ursus americanus', 'data:image/png;base64,iVBORw0KGgo', NOW(), NOW()),
+(4, '63323-258', 'Ursus americanus', 'data:image/png;base64,iVBORw0KGgo', NOW(), NOW()),
+(5, '63323-258', 'Ursus americanus', 'data:image/png;base64,iVBORw0KGgo', NOW(), NOW()),
+(6, '63323-258', 'Ursus americanus', 'data:image/png;base64,iVBORw0KGgo', NOW(), NOW()),
+(7, '63323-258', 'Ursus americanus', 'data:image/png;base64,iVBORw0KGgo', NOW(), NOW());
+
+INSERT INTO product
+(id, product_code, product_name,from_country, created_date, updated_date, category_id, 
+supplier_id )
+VALUES
+(1, 'Stork, greater', 'kẹo','Trung Quoc', '2006-10-10', NOW(), 1, 1),
+(2, 'White-faced', 'bánh','Trung Quoc', '2006-10-10', NOW(), 2, 2),
+(3, 'Admiral, indian', 'bút','Thai Lan', '2006-10-10', NOW(), 3, 3),
+(4, 'Admiral, indian', 'bút', 'Singapore', '2006-10-10', NOW(), 3, 3),
+(5, 'Admiral, indian', 'bút','Thai Lan', '2006-10-10', NOW(), 3, 3),
+(6, 'Admiral, indian', 'bút', 'Singapore', '2006-10-10', NOW(), 3, 3),
+(7, 'Admiral, indian', 'bút','viet nam', '2006-10-10', NOW(), 3, 3);
+
+
+INSERT INTO product_detail
+(id, size, image, color,quantity,created_date,updated_date,product_id)
+VALUES
+(1, 'M', 'D:/image', 'blue', 700, NOW(), NOW(),1),
+(2, 'L', 'D:/image', 'green', 700, NOW(), NOW(),2),
+(3, 'XL', 'D:/image', 'red', 700, NOW(), NOW(),3),
+(4, 'S', 'D:/image', 'yellow', 700, NOW(), NOW(),4),
+(5, 'XL', 'D:/image', 'red', 700, NOW(), NOW(),3),
+(6, 'S', 'D:/image', 'yellow', 700, NOW(), NOW(),4),
+(7, 'XLL', 'D:/image', 'white', 700, NOW(), NOW(),5);
+
+INSERT INTO customer
+(id, username, password, first_name, last_name, created_date, updated_date)
+VALUES
+(1, 'tien1', 'fdfdf39', 'OPANA', 'Ronstring', NOW(), NOW()),
+(2, 'tien2', 'fdf34127', 'Night ', 'Home Ing', NOW(), NOW()),
+(3, 'tien3', 'dsafsf5', 'Vida Mia ', 'Pannier', NOW(), NOW()),
+(4, 'tien4', 'grggr5', 'Vida Mia ', 'Pannier', NOW(), NOW()),
+(5, 'tien3', 'dsafsf5', 'Vida Mia ', 'Pannier', NOW(), NOW()),
+(6, 'tien4', 'grggr5', 'Vida Mia ', 'Pannier', NOW(), NOW()),
+(7, 'tien5', 'fvfvfv5', 'Vida Mia ', 'Pannier', NOW(), NOW());
+
+INSERT INTO orders
+(id, total_money, created_date, customer_id)
+VALUES
+(1, '88743', '2006-10-10', 1),
+(2, '9106', '2007-10-10', 1),
+(3, '2984', '2007-10-10', 2),
+(4, '2984', '2006-10-10', 3),
+(5, '2984', '2007-10-10', 2),
+(6, '2984', '2006-10-10', 3),
+(7, '2984', '2006-11-10', 3);
+
+INSERT INTO order_detail
+(id, order_id, product_detail_id, quantity, total_money)
+VALUES
+(1, 1, 1, 10, 700),
+(2, 1, 2, 10, 700),
+(3, 1, 3, 10, 700),
+(4, 2, 3, 10, 700),
+(5, 3, 3, 10, 700),
+(6, 2, 3, 10, 700),
+(7, 3, 3, 10, 700);
+INSERT INTO permission(permission_name,created_at,updated_at)
+VALUE('aaa', NOW(), NOW()),
+('bbb', NOW(), NOW()),
+('ccc', NOW(), NOW()),
+('ddd', NOW(), NOW()),
+('eee', NOW(), NOW()),
+('aaa' , NOW(), NOW()),
+('aaa', NOW(), NOW());
+
+
+INSERT INTO role(role_name,created_at,updated_at)
+values('rol1', NOW(), NOW()),
+('role1', NOW(), NOW()),
+('rol3', NOW(), NOW()),
+('role4', NOW(), NOW()),
+('role5', NOW(), NOW()),
+('role6' , NOW(), NOW()),
+('role7', NOW(), NOW());
+INSERT INTO user_role(user_id,role_id) 
+VALUES(1,2),
+(2,3),
+(1,3),
+(2,4),
+(4,5),
+(5,4),
+(6,4);
+
+
+INSERT INTO user ( username, password, first_name, last_name, gender, email, birth_day, avartar,phone, address, city,country,code_active,STATUS, created_at, updated_at) 
+VALUES ( 'user1', 'mypassword', 'John', 'Doe', 'Male', 'johndoe@example.com', '1990-01-01', 'avatar.jpg','2434343', '123 nguyen trai', 'hn','viet nam','fdsf','ENABLE', NOW(), NOW()),
+( 'user2', 'mypassword', 'John', 'Doe', 'FEMALE', 'johndoe@example.com', '1990-01-01', 'avatar.jpg','2434343', '123 nguyen trai', 'hn','viet nam','fdsf','ENABLE', NOW(), NOW()),
+( 'user3', 'mypassword', 'John', 'Doe', 'Male', 'johndoe@example.com', '1990-01-01', 'avatar.jpg','2434343', '123 nguyen trai', 'hn','viet nam','fdsf','ENABLE', NOW(), NOW()),
+( 'user4', 'mypassword', 'John', 'Doe', 'FEMALE', 'johndoe@example.com', '1990-01-01', 'avatar.jpg','2434343', '123 nguyen trai', 'hn','viet nam','fdsf','ENABLE', NOW(), NOW()),
+( 'user5', 'mypassword', 'John', 'Doe', 'Male', 'johndoe@example.com', '1990-01-01', 'avatar.jpg','2434343', '123 nguyen trai', 'hn','viet nam','fdsf','ENABLE', NOW(), NOW()),
+( 'user6', 'mypassword', 'John', 'Doe', 'FEMALE', 'johndoe@example.com', '1990-01-01', 'avatar.jpg','2434343', '123 nguyen trai', 'hn','viet nam','fdsf','ENABLE', NOW(), NOW()),
+( 'user7', 'mypassword', 'John', 'Doe', 'Male', 'johndoe@example.com', '1990-01-01', 'avatar.jpg','2434343', '123 nguyen trai', 'hn','viet nam','fdsf','ENABLE', NOW(), NOW()),
+( 'user8', 'mypassword', 'John', 'Doe', 'Male', 'johndoe@example.com', '1990-01-01', 'avatar.jpg','2434343', '123 nguyen trai', 'hn','lao','fdsf','ENABLE', NOW(), NOW());
+
+INSERT INTO role_permission(role_id,permission_id)
+VALUES(1,2),
+(1,3),
+(2,3),
+(3,4),
+(4,5),
+(5,6),
+(4,6);
+
+
