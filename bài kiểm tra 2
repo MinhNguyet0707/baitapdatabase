@@ -1,0 +1,90 @@
+-- 1.Đếm số lượng hóa đơn có chứa sản phẩm do Singapore sản xuất
+
+ SELECT COUNT(orders.id)
+ FROM orders
+ JOIN product ON orders.id=product.id
+ WHERE product.from_country='Singapore';INSERT INTO role_permission(role_id,permission_id);
+-- 2. Hiển thị danh sách sản phẩm có màu xanh (Blue) và size M được bán ra
+SELECT product.id, product.product_name 
+FROM product
+JOIN product_detail ON product.id=product_detail.id
+WHERE product_detail.color='Blue' AND size='M';
+
+
+-- 3. Hiển thị danh sách sản phẩm của nhà cung cấp có mã '63323-258'
+SELECT product.id , product.product_name
+FROM product
+WHERE product.product_code='63323-258';
+
+
+-- 4. Có bao nhiêu sản phẩm được bán ra năm 2022
+SELECT COUNT(order_detail.product_detail_id) AS soSanPhamBan2022
+FROM order_detail
+WHERE order_detail.id IN(
+SELECT order_detail.id
+FROM order_detail
+WHERE Year(created_date)=2022)
+
+
+
+-- 5. Có bao nhiêu sản phẩm bánh được bán ra năm 2023
+SELECT COUNT(*) 
+FROM order_detail
+JOIN product ON order_detail.product_detail_id= product.id
+JOIN orders ON order_detail.id=orders.id
+WHERE YEAR(orders.created_date)=2023 AND product.product_name='bánh';
+
+-- 6. Tìm những khách hàng có tên chứa chữ n ở first_name hoặc last_name
+SELECT * FROM customer
+WHERE customer.first_name LIKE '%n%' OR last_name LIKE '%n%';
+
+-- 7. Đếm những khách hàng có tài khoản bị chặn, trạng thái tài khoản là DEACTIV
+SELECT COUNT(*)
+FROM customer
+WHERE customer.customer_status='DEACTIV';
+
+--  8. Cập nhật tất cả sản phẩm có tên sản phẩm là "Bút" sang "Pen"
+UPDATE product
+SET product.product_name= 'Pen'
+WHERE product_name = 'Bút';
+
+--  9. Hiển thị danh sách sản phẩm không phải là hàng mới nhập
+SELECT * FROM product
+WHERE product.created_date < CURRENT_DATE();
+
+
+
+-- 10. Hiển thị danh sách sản phẩm chưa được gán bất kì thể loại nào
+SELECT *
+FROM product
+WHERE product.id NOT IN (
+SELECT product.id 
+FROM product_detail
+);
+
+
+
+-- 11. Hiển thị danh sách khách hàng sinh năm sau 1990
+
+SELECT* FROM customer
+WHERE YEAR(customer.birthday)>1990;
+
+
+-- 12. Hiển thị danh sách những đơn hàng có tổng số tiền lớn hơn hoặc bằng 50000
+SELECT * FROM orders
+WHERE orders.total_money>=50000;
+
+
+--  13. Hiển thị danh sách khách hàng sinh năm sau 1990 và có quốc tịch VN
+SELECT* FROM customer
+WHERE YEAR(customer.birthday)>1990 AND customer.address='VN';
+
+-- 14. Tính số tiền trung bình của tất cả đơn hàng
+SELECT AVG(orders.total_money)
+FROM orders;
+
+
+
+
+
+ 
